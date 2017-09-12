@@ -7,7 +7,9 @@
 '''
 
 import random
-from urllib.parse import quote
+from urllib import quote
+from config import WxPayConf_pub
+import hashlib
 
 def createRdStr(length=32):
     """产生随机字符串，不长于32位"""
@@ -26,3 +28,15 @@ def formatBizQueryParaMap(paraMap, urlEncode):
         buff.append("{0}={1}".format(k, v))
 
     return "&".join(buff)
+
+def getSign(obj):
+    """生成签名"""
+    #签名步骤一：按字典序排序参数,formatBizQueryParaMap已做
+    String = formatBizQueryParaMap(obj, False)
+    #签名步骤二：在string后加入KEY
+    String = "{0}&key={1}".format(String,WxPayConf_pub.KEY)
+    #签名步骤三：MD5加密
+    String = hashlib.md5(String).hexdigest()
+    #签名步骤四：所有字符转为大写
+    result_ = String.upper()
+    return result_
