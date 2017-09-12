@@ -7,7 +7,7 @@
 '''
 
 import random
-from urllib import quote
+import urllib
 from config import WxPayConf_pub
 import hashlib
 import xml.etree.ElementTree as ET
@@ -38,7 +38,7 @@ class Common_util_pub(object):
         slist = sorted(paraMap)
         buff = []
         for k in slist:
-            v = quote(paraMap[k]) if urlEncode else paraMap[k]
+            v = urllib.quote(paraMap[k]) if urlEncode else paraMap[k]
             buff.append("{0}={1}".format(k, v))
 
         return "&".join(buff)
@@ -72,7 +72,10 @@ class Common_util_pub(object):
     def xmlToArray(xml):
         """将xml转为array"""
         return dict((child.tag, child.text) for child in ET.fromstring(xml))
-    #TODO: 将xml以post方式发送
+
+    def postXmlCurl(self, xml, url, second=30):
+        """以post方式提交xml到对应的接口url"""
+        return urllib.urlopen(xml, url).read()
 
 
 class Wxpay_client_pub(Common_util_pub):
