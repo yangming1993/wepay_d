@@ -10,6 +10,7 @@ import random
 from urllib import quote
 from config import WxPayConf_pub
 import hashlib
+import xml.etree.ElementTree as ET
 
 def createRdStr(length=32):
     """产生随机字符串，不长于32位"""
@@ -39,4 +40,20 @@ def getSign(obj):
     String = hashlib.md5(String).hexdigest()
     #签名步骤四：所有字符转为大写
     result_ = String.upper()
+
     return result_
+
+def arrayToXml(arr):
+    """array转xml"""
+    xml = ["<xml>"]
+    for k, v in arr.iteritems():
+        if v.isdigit():
+            xml.append("<{0}>{1}</{0}>".format(k, v))
+        else:
+            xml.append("<{0}><![CDATA[{1}]]></{0}>".format(k, v))
+    xml.append("</xml>")
+    return "".join(xml)
+
+def xmlToArray(xml):
+    """将xml转为array"""
+    return dict((child.tag, child.text) for child in ET.fromstring(xml))
